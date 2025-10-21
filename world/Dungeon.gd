@@ -17,8 +17,9 @@ func generate_dungeon() -> void:
 		for x in range(grid_size):
 			var room_instance = room_scene.instantiate()
 			room_container.add_child(room_instance)
-			room_instance.position = Vector2(x * 520, y * 520)
+			room_instance.position = Vector2(x * ROOM_SIZE, y * ROOM_SIZE)
 			room_instance.name = "Room_%d_%d" % [x, y]
+			room_instance.configure_walls(x, y, grid_size)
 			rooms.append(room_instance)
 			
 	# Place player
