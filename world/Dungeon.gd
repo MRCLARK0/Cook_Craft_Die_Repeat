@@ -1,8 +1,12 @@
 extends Node2D
 
 @export var room_scene: PackedScene
+@export var enemy_scene: PackedScene
+@export var ingredient_scene: PackedScene
+
 @export var grid_size: int = 3 # simple 3x3 grid
 @onready var room_container: Node2D = $RoomContainer
+
 @onready var player: Node2D = $Player
 
 const ROOM_SIZE: int = 512
@@ -60,3 +64,31 @@ func check_player_room_transition() -> void:
 
 func _on_enter_room(x: int, y: int) -> void:
 	print("Entered room: ", x, ", ", y)
+	center_camera_on_room(x, y)
+	spawn_enemies_in_room(x, y)
+
+func spawn_enemies_in_room(x: int, y: int) -> void:
+	var enemy_count := randi_range(1, 3)
+	for i in range(enemy_count):
+		var enemy = enemy_scene.instantiate()
+		enemy.global_position = Vector2(
+			x * ROOM_SIZE + randf_range(100, ROOM_SIZE - 100),
+			y * ROOM_SIZE + randf_range(100, ROOM_SIZE - 100),
+		)
+		enemy.connect("enemy_defeated", _on_enemy_defeated)
+		room_container.add_child(enemy)
+		
+func _on_enemy_defeated(pos: Vector2) -> void:
+	var drop = ingredient_scene.instantiate()
+	drop.global_position = pos
+	room_container.add_child(drop)
+	
+func center_camera_on_room(x: int, y: int) -> void:
+	# For now, this is a no-op since the camera follows the player automatically.
+	# In future, we might smoothly pan the camera or snap the player to the room center.
+	var center_pos := Vector2(
+		x * ROOM_SIZE + ROOM_SIZE / 2,
+		y * ROOM_SIZE + ROOM_SIZE /2
+	)
+	# Optional: reposition player for debugging / future transitions
+	# player.global_position = center_pos
