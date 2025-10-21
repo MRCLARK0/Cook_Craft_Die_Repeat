@@ -5,6 +5,8 @@ extends Node2D
 @onready var room_container: Node2D = $RoomContainer
 @onready var player: Node2D = $Player
 
+const ROOM_SIZE: int = 512
+
 var rooms: Array = []
 
 func generate_dungeon() -> void:
@@ -35,3 +37,25 @@ func clear_dungeon() -> void:
 	for r in rooms:
 		r.queue_free()
 	rooms.clear()
+	
+var current_room_coords := Vector2.ZERO
+
+func _process(_delta: float) -> void:
+	check_player_room_transition()
+
+func check_player_room_transition() -> void:
+	var room_x := int(player.global_position.x / ROOM_SIZE)
+	var room_y := int(player.global_position.y / ROOM_SIZE)
+
+	# Clamp so we don't go outside the grid
+	room_x = clamp(room_x, 0, grid_size - 1)
+	room_y = clamp(room_y, 0, grid_size - 1)
+
+	var new_coords := Vector2(room_x, room_y)
+
+	if new_coords != current_room_coords:
+		current_room_coords = new_coords
+		_on_enter_room(room_x, room_y)
+
+func _on_enter_room(x: int, y: int) -> void:
+	print("Entered room: ", x, ", ", y)
