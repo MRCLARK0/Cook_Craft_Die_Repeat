@@ -7,8 +7,7 @@ extends Node2D
 @onready var wall_right: StaticBody2D = $Walls/WallRight
 
 func _ready() -> void:
-	# random background color for visibility
-	background.color = Color(randf(), randf(), randf())
+	background.color = random_color()
 	
 # call from dungeon.gd after room creation
 func configure_walls(x: int, y: int, grid_size: int) -> void:
@@ -22,3 +21,6 @@ func configure_walls(x: int, y: int, grid_size: int) -> void:
 	wall_bottom.get_node("CollisionShape2D").disabled = not wall_bottom.visible
 	wall_left.get_node("CollisionShape2D").disabled = not wall_left.visible
 	wall_right.get_node("CollisionShape2D").disabled = not wall_right.visible
+
+func random_color() -> Color:
+	return Color(randf(), randf(), randf())

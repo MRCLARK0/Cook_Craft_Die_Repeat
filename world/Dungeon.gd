@@ -1,18 +1,89 @@
 extends Node2D
 
+################################
+#                              #
+#           EXPORTS            #
+#                              #
+################################
 @export var room_scene: PackedScene
 @export var enemy_scene: PackedScene
 @export var ingredient_scene: PackedScene
+@export var campfire_scene: PackedScene
+@export var cooking_ui_scene: PackedScene
+@export var grid_size: int = 3 
 
-@export var grid_size: int = 3 # simple 3x3 grid
+################################
+#                              #
+#           ON_READY           #
+#                              #
+################################
 @onready var room_container: Node2D = $RoomContainer
+@onready var player = get_tree().get_first_node_in_group("player")
+@onready var cooking_ui = get_tree().get_first_node_in_group("cooking_ui")
 
-@onready var player: Node2D = $Player
-
+################################
+#                              #
+#             VARS             #
+#                              #
+################################
 const ROOM_SIZE: int = 512
-
 var rooms: Array = []
+var current_room_coords := Vector2.ZERO
+var campfire_active := false
 
+################################
+#                              #
+#            START             #
+#                              #
+################################
+func _ready() -> void:
+	add_to_group("dungeon")
+	player = get_tree().get_first_node_in_group("player")
+	cooking_ui = get_tree().get_first_node_in_group("cooking_ui")
+	add_child(cooking_ui)
+
+func _process(_delta: float) -> void:
+	check_player_room_transition()
+	
+func _on_enter_room(x: int, y: int) -> void:
+	print("Entered room: ", x, ", ", y)
+	center_camera_on_room(x, y)
+	spawn_enemies_in_room(x, y)
+	
+	if randf() < 0.2: # 20% chance per room
+		var campfire = campfire_scene.instantiate()
+		campfire.global_position = Vector2(
+			x * ROOM_SIZE + ROOM_SIZE / 2,
+			y * ROOM_SIZE + ROOM_SIZE / 2
+		)
+		campfire.connect("campfire_used", _on_campfire_used)
+		room_container.add_child(campfire)
+
+func _on_enemy_defeated(pos: Vector2) -> void:
+	var drop = ingredient_scene.instantiate()
+	drop.global_position = pos
+	room_container.add_child(drop)
+	
+################################
+#                              #
+#           CAMPFIRE           #
+#                              #
+################################
+func _on_campfire_used() -> void:
+	if cooking_ui.visible:
+		cooking_ui.close()
+	else:
+		print("Opening campfire with inventory:", player.inventory)
+		cooking_ui.open(player.inventory)
+	
+func _on_cook_started(ingredients: Dictionary):
+	print("Cooking completed! Ingredients used: ", ingredients)
+
+################################
+#                              #
+#           HELPERS            #
+#                              #
+################################
 func generate_dungeon() -> void:
 	clear_dungeon()
 	print("Generating dungeon...")
@@ -43,11 +114,6 @@ func clear_dungeon() -> void:
 		r.queue_free()
 	rooms.clear()
 	
-var current_room_coords := Vector2.ZERO
-
-func _process(_delta: float) -> void:
-	check_player_room_transition()
-
 func check_player_room_transition() -> void:
 	var room_x := int(player.global_position.x / ROOM_SIZE)
 	var room_y := int(player.global_position.y / ROOM_SIZE)
@@ -62,11 +128,6 @@ func check_player_room_transition() -> void:
 		current_room_coords = new_coords
 		_on_enter_room(room_x, room_y)
 
-func _on_enter_room(x: int, y: int) -> void:
-	print("Entered room: ", x, ", ", y)
-	center_camera_on_room(x, y)
-	spawn_enemies_in_room(x, y)
-
 func spawn_enemies_in_room(x: int, y: int) -> void:
 	var enemy_count := randi_range(1, 3)
 	for i in range(enemy_count):
@@ -78,17 +139,18 @@ func spawn_enemies_in_room(x: int, y: int) -> void:
 		enemy.connect("enemy_defeated", _on_enemy_defeated)
 		room_container.add_child(enemy)
 		
-func _on_enemy_defeated(pos: Vector2) -> void:
-	var drop = ingredient_scene.instantiate()
-	drop.global_position = pos
-	room_container.add_child(drop)
-	
 func center_camera_on_room(x: int, y: int) -> void:
-	# For now, this is a no-op since the camera follows the player automatically.
-	# In future, we might smoothly pan the camera or snap the player to the room center.
 	var center_pos := Vector2(
 		x * ROOM_SIZE + ROOM_SIZE / 2,
 		y * ROOM_SIZE + ROOM_SIZE /2
 	)
-	# Optional: reposition player for debugging / future transitions
-	# player.global_position = center_pos
+
+func toggle_campfire_ui(campfire: Node):
+	if not player or not cooking_ui:
+		print("Missing player or UI reference")
+		return
+	campfire_active = !campfire_active
+	if campfire_active:
+		cooking_ui.open(player.inventory)
+	else:
+		cooking_ui.close()

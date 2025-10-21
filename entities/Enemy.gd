@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-signal enemy_defeated(pos: Vector2)
+signal enemy_defeated
 
 @export var move_speed: float = 100.0
 @export var detection_radius: float = 150.0
@@ -39,10 +39,6 @@ func _on_body_exited(body: Node) -> void:
 func take_damage(amount: int) -> void:
 	health -= amount
 	if health <= 0:
-		die()
+		emit_signal("enemy_defeated", self)
+		queue_free()
 		
-func die() -> void:
-	print("Enemy defeated! Dropping ingredient.")
-	emit_signal("enemy_defeated", global_position)
-	queue_free()
-	

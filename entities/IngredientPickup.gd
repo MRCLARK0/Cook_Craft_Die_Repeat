@@ -7,5 +7,5 @@ func _ready() -> void:
 	
 func _on_body_entered(body: Node) -> void:
 	if body.is_in_group("player"):
-		print("Picked up: ", ingredient_name)
+		body.add_item(ingredient_name)
 		queue_free()

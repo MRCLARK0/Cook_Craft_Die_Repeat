@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://blp3re4grv3q8"]
+
+[ext_resource type="Texture2D" uid="uid://chpxcyhskta2f" path="res://icon.svg" id="1_6rtt7"]
+[ext_resource type="Script" uid="uid://ce3se1s45ts5o" path="res://entities/Campfire.gd" id="1_giptt"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_giptt"]
+radius = 24.0
+
+[node name="Campfire" type="Area2D" groups=["interactables"]]
+script = ExtResource("1_giptt")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_6rtt7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_giptt")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

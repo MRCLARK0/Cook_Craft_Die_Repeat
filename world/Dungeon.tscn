@@ -1,18 +1,24 @@
-[gd_scene load_steps=6 format=3 uid="uid://bow1p3ancxb6q"]
+[gd_scene load_steps=8 format=3 uid="uid://bow1p3ancxb6q"]
 
 [ext_resource type="Script" uid="uid://c28gri2wgapqs" path="res://world/Dungeon.gd" id="1_mtm5p"]
 [ext_resource type="PackedScene" uid="uid://1ct8rnkyxlbc" path="res://world/Room.tscn" id="2_veh6i"]
 [ext_resource type="PackedScene" uid="uid://cunwrpanshkn" path="res://entities/Player.tscn" id="3_iphg8"]
 [ext_resource type="PackedScene" uid="uid://cymfgqh7gyv35" path="res://entities/Enemy.tscn" id="3_pospp"]
 [ext_resource type="PackedScene" uid="uid://cskf8wk7rtosj" path="res://entities/IngredientPickup.tscn" id="4_5dsa0"]
+[ext_resource type="PackedScene" uid="uid://blp3re4grv3q8" path="res://entities/Campfire.tscn" id="5_pospp"]
+[ext_resource type="PackedScene" uid="uid://c7g8hxp28gpdc" path="res://ui/CookingUI.tscn" id="6_5dsa0"]
 
 [node name="Dungeon" type="Node2D"]
 script = ExtResource("1_mtm5p")
 room_scene = ExtResource("2_veh6i")
 enemy_scene = ExtResource("3_pospp")
 ingredient_scene = ExtResource("4_5dsa0")
+campfire_scene = ExtResource("5_pospp")
+cooking_ui_scene = ExtResource("6_5dsa0")
 
 [node name="Player" parent="." instance=ExtResource("3_iphg8")]
 z_index = 10
 
 [node name="RoomContainer" type="Node2D" parent="."]
+
+[node name="CookingUI" parent="." instance=ExtResource("6_5dsa0")]

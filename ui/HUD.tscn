@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://befopv5pqe3ut"]
+
+[node name="HUD" type="CanvasLayer"]
+
+[node name="Label" type="Label" parent="."]
+offset_right = 85.0
+offset_bottom = 44.0
+text = "Inventory: "

@@ -1,14 +1,23 @@
 extends CharacterBody2D
+class_name Player
 
 @export var move_speed: float  = 200.0
 @export var attack_range: float = 24.0
-@export var attack_cooldown: float = 0.4
+@export var attack_cooldown: float = 0.3
+@export var attack_timer: float = 0.0
 
 var can_attack: bool = true
+var inventory: Dictionary = {}
 
-func _process(_delta):
-	if Input.is_action_just_pressed("attack") and can_attack:
+func _ready() -> void:
+	add_to_group("player")
+
+func _process(delta):
+	if attack_timer > 0:
+		attack_timer -= delta
+	if Input.is_action_just_pressed("attack") and attack_timer <= 0:
 		perform_attack()
+		attack_timer = attack_cooldown
 		
 func _physics_process(delta: float) -> void:
 	var input_vector := Vector2.ZERO

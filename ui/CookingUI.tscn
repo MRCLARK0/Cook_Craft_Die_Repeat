@@ -1,0 +1,25 @@
+[gd_scene load_steps=2 format=3 uid="uid://c7g8hxp28gpdc"]
+
+[ext_resource type="Script" uid="uid://b48apmqrgn704" path="res://ui/CookingUI.gd" id="1_tgugv"]
+
+[node name="CookingUI" type="CanvasLayer"]
+script = ExtResource("1_tgugv")
+
+[node name="Panel" type="Panel" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="Panel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="Cook" type="Button" parent="Panel"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="Close" type="Button" parent="Panel"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0

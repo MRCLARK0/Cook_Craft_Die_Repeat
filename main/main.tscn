@@ -1,11 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://sv6jsdfghujv"]
+[gd_scene load_steps=5 format=3 uid="uid://sv6jsdfghujv"]
 
 [ext_resource type="PackedScene" uid="uid://bow1p3ancxb6q" path="res://world/Dungeon.tscn" id="1_53q0u"]
 [ext_resource type="Script" uid="uid://bhwvlkvphqvax" path="res://main/Main.gd" id="1_pjrb6"]
+[ext_resource type="Script" uid="uid://ki3bbc07i03w" path="res://ui/HUD.gd" id="2_xwkvk"]
+[ext_resource type="PackedScene" uid="uid://befopv5pqe3ut" path="res://ui/HUD.tscn" id="3_c651c"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_pjrb6")
 
-[node name="UI" type="CanvasLayer" parent="."]
-
 [node name="Dungeon" parent="." instance=ExtResource("1_53q0u")]
+
+[node name="HUD" parent="." instance=ExtResource("3_c651c")]
+script = ExtResource("2_xwkvk")
